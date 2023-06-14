@@ -55,6 +55,28 @@ app.post('/products/create', upload.single('image'), async (req, res) => {
         console.log(e.message);
     }
 });
+app.get('/products/:id/detail', async (req, res) => {
+    let productId = +req.params.id;
+    let product = await data_source_1.AppDataSource.getRepository(Product_1.Product).findOneBy({ id: productId });
+    res.render('detail', { product: product });
+});
+app.get('/products/:id/update', async (req, res) => {
+    let productId = +req.params.id;
+    let product = await data_source_1.AppDataSource.getRepository(Product_1.Product).findOneBy({ id: productId });
+    res.render('update', { product: product });
+});
+app.post('/products/:id/update', upload.single('image'), async (req, res) => {
+    let productId = +req.params.id;
+    let product = await data_source_1.AppDataSource.getRepository(Product_1.Product).findOneBy({ id: productId });
+    let { name, price, author } = req.body;
+    let image = req.file.originalname;
+    product.name = name;
+    product.price = price;
+    product.author = author;
+    product.image = image;
+    await data_source_1.AppDataSource.getRepository(Product_1.Product).save(product);
+    res.redirect('/products');
+});
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
